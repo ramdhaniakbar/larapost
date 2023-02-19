@@ -13,8 +13,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', '\App\Http\Controllers\PagesController@index')->name('index');
-Route::get('/about', '\App\Http\Controllers\PagesController@about')->name('about');
-Route::get('/services', '\App\Http\Controllers\PagesController@services')->name('services');
+// Guest Routes
+Route::group(['middleware' => ['guest']], function () {
+   Route::get('/', 'App\Http\Controllers\PagesController@index')->name('index');
+});
 
-Route::resource('/posts', '\App\Http\Controllers\PostController');
+// Authentication Routes
+Route::get('/register', 'App\Http\Controllers\AuthController@showRegister')->name('register');
+Route::post('/register', 'App\Http\Controllers\AuthController@register')->name('register.store');
+Route::get('/login', 'App\Http\Controllers\AuthController@showLogin')->name('login');
+Route::post('/login', 'App\Http\Controllers\AuthController@login')->name('login.store');
+
+Route::get('/about', 'App\Http\Controllers\PagesController@about')->name('about');
+Route::get('/services', 'App\Http\Controllers\PagesController@services')->name('services');
+
+// Authenticated Routes
+Route::group(['middleware' => ['auth:sanctum']], function () {
+   Route::get('/dashboard', 'App\Http\Controllers\DashboardController@index')->name('dashboard');
+   Route::post('/logout', 'App\Http\Controllers\AuthController@logout')->name('logout');
+});
+
+Route::resource('/posts', 'App\Http\Controllers\PostController');

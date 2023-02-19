@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum', ['except' => ['index', 'show']]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -45,10 +50,16 @@ class PostController extends Controller
         ]);
 
         // Create Post
-        $post = new \App\Models\Post;
-        $post->title = $request->input('title');
-        $post->body = $request->input('body');
-        $post->save();
+        // $post = new \App\Models\Post;
+        // $post->title = $request->input('title');
+        // $post->body = $request->input('body');
+        // $post->save();
+
+        \App\Models\Post::create([
+            'user_id' => auth()->user()->id,
+            'title' => $request->input('title'),
+            'body' => $request->input('body'),
+        ]);
 
         return redirect()->route('posts.index')->with('success', 'Post Created');
     }
@@ -61,7 +72,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post = \App\Models\Post::findOrFail($id);
+        $post = \App\Models\Post::find($id);
         return view('pages.posts.show', compact('post'));
     }
 
@@ -73,7 +84,13 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        $post = \App\Models\Post::findOrFail($id);
+        $post = \App\Models\Post::find($id);
+
+        // check for correct user
+        if (auth()->user()->id !== $post->user_id) {
+            return redirect()->route('posts.index')->with('error', 'Unauthorized Page');
+        }
+
         return view('pages.posts.edit', compact('post'));
     }
 
@@ -92,7 +109,7 @@ class PostController extends Controller
         ]);
 
         // Create Post
-        $post = \App\Models\Post::findOrFail($id);
+        $post = \App\Models\Post::find($id);
         $post->title = $request->input('title');
         $post->body = $request->input('body');
         $post->save();
@@ -108,9 +125,14 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        $post = \App\Models\Post::findOrFail($id);
-        $post->delete();
+        $post = \App\Models\Post::find($id);
 
+        // check for correct user
+        if (auth()->user()->id !== $post->user_id) {
+            return redirect()->route('posts.index')->with('error', 'Unauthorized Page');
+        }
+
+        $post->delete();
         return redirect()->route('posts.index')->with('success', 'Post Removed');
     }
 }

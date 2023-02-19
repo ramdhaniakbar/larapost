@@ -12,7 +12,7 @@
          <h3>
             <a href="{{ route('posts.show', $post->id) }}">{{ $post->title }}</a>
          </h3>
-         <small>Written on {{ $post->created_at }}</small>
+         <small>Written on {{ $post->created_at }} by {{ $post->user->name }}</small>
       </div>
    </div>
    @endforeach

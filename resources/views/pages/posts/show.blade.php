@@ -12,6 +12,8 @@
    <hr />
    <small>Written on {{ $post->created_at }}</small>
    <hr>
+   @auth
+   @if (Auth::user()->id === $post->user_id)
    <div class="d-flex">
       <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-light border me-2">Edit</a>
       <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
@@ -20,5 +22,7 @@
          <button type="submit" class="btn btn-danger">Delete</button>
       </form>
    </div>
+   @endif
+   @endauth
 </div>
 @endsection
