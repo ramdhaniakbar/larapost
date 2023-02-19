@@ -21,7 +21,7 @@
                         <a href="{{ route('posts.create') }}" class="btn btn-primary">Create Post</a>
                     </div>
                     @if (count($posts) > 0)
-                    <table class="mt-3 table table-striped">
+                    <table class="mt-3 table table-striped border">
                         <tr>
                             <th>Title</th>
                             <th></th>

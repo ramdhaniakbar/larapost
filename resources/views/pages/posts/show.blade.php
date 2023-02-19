@@ -6,6 +6,8 @@
 <div>
    <a href="{{ route('posts.index') }}" class="btn btn-light border">Go back</a>
    <h1 class="mt-3">{{ $post->title }}</h1>
+   <img style="width: 50%;" src="/storage/cover_images/{{ $post->cover_image }}" alt="">
+   <br><br>
    <div>
       {{ $post->body }}
    </div>
